@@ -38,7 +38,7 @@
     <!-- BACKGROUND IMAGE -->
     <!-- 
     1. Use your exact vintage tape-machine photo (convert to JPG if needed)
-    2. Upload to Sundayjuice repo root or /studio/ as crate-grabber-bg.jpg
+    2. Upload to Sundayjuice repo root as crate-grabber-bg.jpg
     3. Replace 'YOUR_IMAGE_URL_HERE' with the raw GitHub URL
     4. Image is now deliberately prominent (lighter gradient overlay)
     -->
@@ -248,19 +248,19 @@ https://bandcamp.com/track/..."></textarea>
             Object.keys(manipulationGroups).forEach(groupName => {
                 const groupDiv = document.createElement('div');
                 groupDiv.className = 'mb-1';
-                groupDiv.innerHTML = `<div class="text-[10px] uppercase tracking-widest text-amber-400/60 mb-1.5 px-1">${groupName}</div>`;
+                groupDiv.innerHTML = `<div class=\"text-[10px] uppercase tracking-widest text-amber-400/60 mb-1.5 px-1\">${groupName}</div>`;
                 
                 manipulationGroups[groupName].forEach(opt => {
                     const row = document.createElement('div');
                     row.className = `flex items-center justify-between p-3 mb-1 rounded-2xl bg-black/30 border border-white/10`;
                     row.innerHTML = `
                         <div>
-                            <div class="font-medium text-sm">${opt.label}</div>
-                            <div class="text-[10px] text-amber-400/70">${opt.desc}</div>
+                            <div class=\"font-medium text-sm\">${opt.label}</div>
+                            <div class=\"text-[10px] text-amber-400/70\">${opt.desc}</div>
                         </div>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="toggle-${opt.id}" class="sr-only peer" ${opt.default ? 'checked' : ''} onchange="updateManipulationUI()">
-                            <div class="w-11 h-6 bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                        <label class=\"relative inline-flex items-center cursor-pointer\">
+                            <input type=\"checkbox\" id=\"toggle-${opt.id}\" class=\"sr-only peer\" ${opt.default ? 'checked' : ''} onchange=\"updateManipulationUI()\">
+                            <div class=\"w-11 h-6 bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500\"></div>
                         </label>
                     `;
                     groupDiv.appendChild(row);
@@ -313,38 +313,271 @@ https://bandcamp.com/track/..."></textarea>
 
         function loadBestPrompt() {
             const ta = document.getElementById('postprompt-textarea');
-            ta.value = `You are an expert crate curator, audio engineer, and emotional gift designer working with CHLO & MIMI aesthetic.
-
-Given the downloaded tracks:
-
-1. Analyze BPM, key, energy, emotional tone.
-2. Apply subtle analog warmth EQ (+2–4 dB body at 80–120 Hz, gentle air at 8–12 kHz).
-3. Light musical compression (3:1). Normalize to −0.8 dBTP.
-4. Embed rich metadata + Crate Juice Since ’23 tags.
-5. Suggest 30–60 second emotional gift edits or voice-note overlays.
-6. Note any stem opportunities.
-
-Respond with the exact processing steps + ready-to-use prompt for Suno/Udio/Logic.`;
+            ta.value = `You are an expert crate curator, audio engineer, and emotional gift designer working with CHLO & MIMI aesthetic.\n\nGiven the downloaded tracks:\n\n1. Analyze BPM, key, energy, emotional tone.\n2. Apply subtle analog warmth EQ (+2–4 dB body at 80–120 Hz, gentle air at 8–12 kHz).\n3. Light musical compression (3:1). Normalize to −0.8 dBTP.\n4. Embed rich metadata + Crate Juice Since ’23 tags.\n5. Suggest 30–60 second emotional gift edits or voice-note overlays.\n6. Note any stem opportunities.\n\nRespond with the exact processing steps + ready-to-use prompt for Suno/Udio/Logic.`;
         }
 
-        // All other functions (generateCrateCommand, playlist logic, OCR functions, CSV, copy, etc.) are the same polished versions from v1.2/v2 but with v3 naming and playlist flag integration.
-        // (Full working code is included — the key new pieces above are the grouped toggles + live summary + refined OCR workflow)
+        function selectFormat(format, element) {
+            currentFormat = format;
+            document.querySelectorAll('.format-btn').forEach(btn => {
+                btn.classList.remove('active', 'border-orange-400/70');
+            });
+            if (element) {
+                element.classList.add('active', 'border-orange-400/70');
+            }
+        }
+
+        function copyToClipboard(elementId, btn) {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            const text = (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') ? el.value : el.textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                const orig = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> COPIED';
+                setTimeout(() => { btn.innerHTML = orig; }, 1600);
+            }).catch(() => {
+                // Fallback
+                const range = document.createRange();
+                range.selectNodeContents(el);
+                const sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(range);
+                document.execCommand('copy');
+                sel.removeAllRanges();
+                const orig = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> COPIED';
+                setTimeout(() => { btn.innerHTML = orig; }, 1600);
+            });
+        }
+
+        function copySetupCommand() {
+            const setupCmd = `# CRATE GRABBER v3.0 • A-SHELL SETUP (run once in A-Shell)
+echo "Updating yt-dlp for best crate performance..."
+pip3 install -U yt-dlp 2>/dev/null || pip install -U yt-dlp
+echo "✅ yt-dlp ready. Now paste any generated command below."
+echo "Tip: Use 'cd ~/CrateGrabber' and organize by date."`;
+            navigator.clipboard.writeText(setupCmd).then(() => {
+                const toast = document.createElement('div');
+                toast.className = 'fixed bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 bg-emerald-600 text-white text-xs rounded-2xl shadow-xl z-50';
+                toast.textContent = 'Setup command copied — paste into A-Shell terminal';
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 2200);
+            }).catch(() => alert('Setup command ready (copy manually if needed):\n' + setupCmd));
+        }
+
+        function clearAll() {
+            document.getElementById('url-input').value = '';
+            const ocrTa = document.getElementById('ocr-text');
+            if (ocrTa) ocrTa.value = '';
+            const out = document.getElementById('output-section');
+            if (out) out.classList.add('hidden');
+            const ocrP = document.getElementById('ocr-panel');
+            if (ocrP) ocrP.classList.add('hidden');
+            const warn = document.getElementById('warning-box');
+            if (warn) warn.classList.add('hidden');
+            const paths = document.getElementById('paths-section');
+            if (paths) paths.classList.add('hidden');
+            const ta = document.getElementById('postprompt-textarea');
+            if (ta) ta.value = '';
+            const sum = document.getElementById('processing-summary');
+            if (sum) sum.textContent = 'No processing options selected yet. Toggle some above.';
+        }
+
+        function hideOutput() {
+            const out = document.getElementById('output-section');
+            if (out) out.classList.add('hidden');
+        }
+
+        function hideOCRPanel() {
+            const p = document.getElementById('ocr-panel');
+            if (p) p.classList.add('hidden');
+        }
+
+        function uploadCSV() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.csv,text/csv';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    const text = ev.target.result || '';
+                    const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+                    let urls = [];
+                    lines.forEach(line => {
+                        const parts = line.split(/[\t,]+/);
+                        parts.forEach(p => {
+                            const t = p.trim();
+                            if (t.startsWith('http://') || t.startsWith('https://')) urls.push(t);
+                        });
+                        if ((line.trim().startsWith('http://') || line.trim().startsWith('https://')) && !urls.includes(line.trim())) {
+                            urls.push(line.trim());
+                        }
+                    });
+                    if (urls.length > 0) {
+                        const urlTa = document.getElementById('url-input');
+                        const existing = urlTa.value.trim();
+                        const toAdd = urls.filter(u => !existing.includes(u)).join('\n');
+                        urlTa.value = existing ? existing + '\n' + toAdd : toAdd;
+                        const fb = document.createElement('div');
+                        fb.className = 'text-[10px] text-emerald-400 mt-1 px-1';
+                        fb.textContent = `+${urls.length} URLs from CSV`;
+                        const parent = urlTa.parentNode;
+                        parent.appendChild(fb);
+                        setTimeout(() => fb.remove(), 1800);
+                    } else {
+                        alert('No valid http(s) URLs found in the CSV. Check format (one URL per cell or line).');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        function uploadImageForOCR() {
+            const panel = document.getElementById('ocr-panel');
+            panel.classList.remove('hidden');
+            const preview = document.getElementById('ocr-preview');
+            preview.innerHTML = '';
+            preview.classList.add('hidden');
+        }
+
+        function simulateOCR() {
+            const ta = document.getElementById('ocr-text');
+            ta.value = `DEMO TRACKLIST (from photo/OCR simulation)
+
+1. https://soundcloud.com/user/track-warm-vibes
+2. https://youtube.com/watch?v=dQw4w9wgccc
+3. https://bandcamp.com/track/sunset-crate-2026
+4. https://open.spotify.com/track/4PTARz0m0x3p7p7p7p7p7p
+
+Notes for crate #7: heavy on low end, perfect for late night drive edits. Add warmth + air.`;
+        }
+
+        function extractAndAddURLs() {
+            const ocrTa = document.getElementById('ocr-text');
+            const urlTa = document.getElementById('url-input');
+            const text = ocrTa.value || '';
+            const urlRegex = /https?:\/\/[^\s"'<>]+/g;
+            const matches = text.match(urlRegex) || [];
+            if (matches.length === 0) {
+                alert('No URLs found. Paste clearer text or hit LOAD DEMO first.');
+                return;
+            }
+            const unique = [...new Set(matches)];
+            const existing = (urlTa.value || '').trim();
+            const newOnes = unique.filter(u => !existing.includes(u));
+            if (newOnes.length > 0) {
+                urlTa.value = existing ? existing + '\n' + newOnes.join('\n') : newOnes.join('\n');
+            }
+            document.getElementById('ocr-panel').classList.add('hidden');
+            const fb = document.createElement('div');
+            fb.className = 'fixed bottom-6 right-6 px-4 py-2 bg-orange-500 text-white text-xs rounded-2xl shadow z-50';
+            fb.textContent = `✓ Added ${newOnes.length || unique.length} URL(s)`;
+            document.body.appendChild(fb);
+            setTimeout(() => fb.remove(), 1400);
+        }
 
         function generateCrateCommand() {
-            // ... full logic with playlist checkbox support ...
-            // After showing output:
-            createManipulationToggles();
+            const urlInputEl = document.getElementById('url-input');
+            const raw = (urlInputEl.value || '').trim();
+            if (!raw) {
+                const warn = document.getElementById('warning-box');
+                warn.innerHTML = `<div class=\"p-4 rounded-2xl bg-red-950/60 border border-red-500/60 text-sm text-red-300 flex items-start gap-2\"><i class=\"fa-solid fa-exclamation-triangle mt-0.5\"></i> <span><strong>No URLs detected.</strong> Paste one or more links (or a playlist URL) above first.</span></div>`;
+                warn.classList.remove('hidden');
+                setTimeout(() => { warn.classList.add('hidden'); }, 4200);
+                urlInputEl.focus();
+                return;
+            }
+
+            const urls = raw.split(/\r?\n/).map(u => u.trim()).filter(u => u.length > 0);
+            const isPlaylist = document.getElementById('playlist-mode').checked;
+            const includePaths = document.getElementById('include-paths').checked;
+            const fmt = currentFormat;
+
+            let ytCmd = 'yt-dlp ';
+            let formatDesc = '';
+            let outExt = 'mp3';
+
+            if (fmt === 'mp3') {
+                ytCmd += '-x --audio-format mp3 --audio-quality 0 --embed-metadata --add-metadata ';
+                formatDesc = 'MP3 • high quality audio crate';
+                outExt = 'mp3';
+            } else if (fmt === 'wav') {
+                ytCmd += '-x --audio-format wav --audio-quality 0 --embed-metadata ';
+                formatDesc = 'WAV • lossless archival crate';
+                outExt = 'wav';
+            } else if (fmt === 'vid') {
+                ytCmd += '--embed-metadata --add-metadata ';
+                formatDesc = 'VID • best video + audio';
+                outExt = 'mp4';
+            } else if (fmt === 'vidaud') {
+                ytCmd += '-f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best" --merge-output-format mp4 --embed-metadata ';
+                formatDesc = 'VID+AUD • separate streams merged for editing';
+                outExt = 'mp4';
+            }
+
+            if (isPlaylist) {
+                ytCmd += '--yes-playlist ';
+            }
+
+            ytCmd += '-o "%(title)s [%(id)s].%(ext)s" ';
+
+            const urlPart = urls.map(u => `"${u}"`).join(' ');
+            ytCmd += urlPart;
+
+            const today = new Date().toISOString().slice(0, 10);
+            const wrapper = `#!/bin/bash
+# Crate Grabber v3.0 wrapper — run in A-Shell
+set -e
+mkdir -p ~/CrateGrabber/${today}
+cd ~/CrateGrabber/${today}
+echo "🎵 Grabbing crate into $(pwd)..."
+${ytCmd}
+echo "✅ Done. Files in ~/CrateGrabber/${today}"
+ls -lh --color=auto 2>/dev/null || ls -lh`;
+
+            document.getElementById('command-output').textContent = ytCmd;
+            document.getElementById('wrapper-output').textContent = wrapper;
+
+            const pathsSec = document.getElementById('paths-section');
+            const pathsPre = document.getElementById('paths-output');
+            if (includePaths) {
+                pathsPre.textContent = `Recommended A-Shell / iOS paths:
+• ~/CrateGrabber/${today}/
+• ~/Music/CrateJuice/${today}/
+• ~/Downloads/CrateGrabber_${today}/
+
+After download: use 'ffprobe *.${outExt}' or Files app to inspect.
+Then AirDrop / import to Music or your DAW.`;
+                pathsSec.classList.remove('hidden');
+            } else {
+                pathsSec.classList.add('hidden');
+            }
+
+            const warn = document.getElementById('warning-box');
+            warn.innerHTML = `<div class=\"p-3 rounded-2xl bg-emerald-950/40 border border-emerald-500/40 text-xs text-emerald-300\">${formatDesc} • ${urls.length} source(s) • Playlist: ${isPlaylist ? 'YES' : 'NO'} • Paths: ${includePaths ? 'included' : 'hidden'} • Ready to paste &amp; run.</div>`;
+            warn.classList.remove('hidden');
+
+            const outSec = document.getElementById('output-section');
+            outSec.classList.remove('hidden');
             updateManipulationUI();
-            // (the rest of the command/wrapper generation is identical to previous versions but now includes playlist flag when checked)
+
+            setTimeout(() => {
+                outSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 80);
         }
 
         function init() {
             createManipulationToggles();
             const firstBtn = document.querySelector('[data-format="mp3"]');
-            if (firstBtn) firstBtn.classList.add('active', 'border-orange-400/70');
-            
-            // Keyboard + other init...
-            console.log('%c[CRATE GRABBER v3.0] Full leap ready in Sundayjuice', 'color:#854d0e');
+            if (firstBtn) {
+                firstBtn.classList.add('active', 'border-orange-400/70');
+            }
+            const sum = document.getElementById('processing-summary');
+            if (sum) sum.textContent = 'Toggle options above to build your live processing summary + editable AI prompt.';
+
+            console.log('%c[CRATE GRABBER v3.0] All functions loaded & fixed in Sundayjuice', 'color:#854d0e');
         }
 
         window.onload = init;
