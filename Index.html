@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#9f3e0f">
     <meta name="apple-mobile-web-app-title" content="Crate Grabber">
-    <title>CRATE GRABBER • v3.2 • THE STUDIO (Sliders)</title>
+    <title>CRATE GRABBER • v3.2 • THE STUDIO</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -33,29 +33,18 @@
         .vignette { box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.55); }
         .section-header { font-size: 13px; letter-spacing: 1.5px; font-weight: 600; color: #fb923c; }
         
-        /* Background image - using your uploaded crate-grabber-bg.jpg */
         .bg-vignette {
-            background-image: linear-gradient(to bottom, rgba(15,8,3,0.52), rgba(25,12,5,0.65)), url('crate-grabber-bg.jpg');
+            background-image: linear-gradient(to bottom, rgba(15,8,3,0.52), rgba(25,12,5,0.65)), url('crate_grabber_bg.jpeg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
         }
         
-        .slider-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .slider-row input[type="range"] {
-            flex: 1;
-            accent-color: #fb923c;
-        }
+        .slider-row { display: flex; align-items: center; gap: 12px; }
+        .slider-row input[type="range"] { flex: 1; accent-color: #fb923c; }
         .slider-value {
             font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-            font-size: 12px;
-            min-width: 52px;
-            text-align: right;
-            color: #fed7aa;
+            font-size: 12px; min-width: 52px; text-align: right; color: #fed7aa;
         }
         .post-control {
             background: rgba(0,0,0,0.25);
@@ -67,8 +56,6 @@
     </style>
 </head>
 <body class="warm-gradient text-amber-100 min-h-screen">
-    <!-- Background image is now set in the CSS above using your crate-grabber-bg.jpg -->
-
     <div class="min-h-screen bg-vignette vignette">
 
         <!-- Header -->
@@ -79,7 +66,7 @@
                 </div>
                 <div>
                     <h1 class="graffiti-header text-6xl md:text-7xl font-black tracking-[-3.5px] text-amber-100">CRATE GRABBER</h1>
-                    <p class="text-[11px] text-amber-400/80 -mt-1 tracking-[3px]">v3.2 • THE STUDIO • iOS A-SHELL POWERED • SLIDERS</p>
+                    <p class="text-[11px] text-amber-400/80 -mt-1 tracking-[3px]">v3.2 • THE STUDIO • iOS A-SHELL POWERED</p>
                 </div>
             </div>
             <button onclick="copySetupCommand()" class="px-5 py-2.5 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/20 text-sm font-semibold flex items-center gap-x-2 active:scale-[0.985]">
@@ -89,12 +76,11 @@
 
         <div class="max-w-5xl mx-auto px-6 pb-12">
             <div class="mb-8 text-center">
-                <p class="text-xl text-amber-200/90 max-w-lg mx-auto">Drop URLs • Grab crates • Incremental sliders for warmth, stems, air, compression &amp; more</p>
+                <p class="text-xl text-amber-200/90 max-w-lg mx-auto">Drop URLs • Grab crates • Incremental sliders • Live AI prompt</p>
             </div>
 
-            <!-- Main Glass Card (Input) -->
+            <!-- Input Card -->
             <div class="glass rounded-3xl p-8 md:p-10 shadow-2xl">
-                
                 <div class="flex flex-wrap gap-2 mb-5">
                     <button onclick="uploadCSV()" class="px-4 py-2 text-xs rounded-2xl bg-white/5 hover:bg-white/10 border border-white/15 flex items-center gap-x-2 transition-all">
                         <i class="fa-solid fa-file-csv"></i> <span>Upload CSV</span>
@@ -110,8 +96,7 @@
                         <i class="fa-solid fa-link"></i> <span>URLS (one per line)</span>
                     </div>
                     <textarea id="url-input" rows="5" class="w-full bg-black/40 border border-white/15 focus:border-orange-400/60 rounded-2xl p-5 text-base font-mono" 
-                              placeholder="https://youtube.com/watch?v=...
-https://soundcloud.com/..."></textarea>
+                              placeholder="https://youtube.com/watch?v=..."></textarea>
                 </div>
 
                 <div class="mb-6 flex items-center gap-x-3 px-1">
@@ -119,19 +104,6 @@ https://soundcloud.com/..."></textarea>
                         <input type="checkbox" id="playlist-mode" class="accent-orange-500 w-4 h-4" checked>
                         <span class="font-medium">This is a playlist — download all tracks</span>
                     </label>
-                </div>
-
-                <!-- OCR Panel -->
-                <div id="ocr-panel" class="hidden mb-6 p-5 rounded-2xl border border-white/10 bg-black/30">
-                    <div class="flex justify-between items-center mb-3">
-                        <div class="font-semibold text-amber-300 flex items-center gap-x-2"><i class="fa-solid fa-image"></i> IMAGE → URLS (OCR)</div>
-                        <button onclick="hideOCRPanel()" class="text-xs px-3 py-1 rounded-xl bg-white/10">CLOSE</button>
-                    </div>
-                    <textarea id="ocr-text" rows="3" class="w-full bg-black/50 border border-white/10 rounded-xl p-4 text-sm font-mono" placeholder="Paste OCR result..."></textarea>
-                    <div class="flex gap-2 mt-3">
-                        <button onclick="extractAndAddURLs()" class="flex-1 py-2 text-sm rounded-2xl bg-orange-500/90 hover:bg-orange-500 text-white font-semibold">EXTRACT &amp; ADD URLS</button>
-                        <button onclick="simulateOCR()" class="px-4 py-2 text-sm rounded-2xl bg-white/10 hover:bg-white/15 border border-white/20">DEMO</button>
-                    </div>
                 </div>
 
                 <!-- Format -->
@@ -156,22 +128,16 @@ https://soundcloud.com/..."></textarea>
                 <button onclick="generateCrateCommand()" class="studio-btn w-full py-7 rounded-3xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 text-white font-black text-3xl tracking-[-1.5px] flex items-center justify-center gap-x-4 active:scale-[0.985]">
                     <span>🪕</span> <span>DROP TO CRATE</span>
                 </button>
-                
-                <div class="flex justify-center mt-3">
-                    <label class="flex items-center gap-x-2 text-xs text-amber-300/80 cursor-pointer">
-                        <input type="checkbox" id="include-paths" class="accent-orange-500"> <span>Include local file path suggestions</span>
-                    </label>
-                </div>
             </div>
 
-            <!-- OUTPUT SECTION v3.2 — SLIDERS -->
+            <!-- OUTPUT SECTION -->
             <div id="output-section" class="hidden mt-8 glass rounded-3xl p-8 md:p-10">
                 <div class="flex items-center justify-between mb-6">
                     <div class="flex items-center gap-x-3">
                         <div class="w-9 h-9 rounded-2xl bg-orange-500/90 flex items-center justify-center"><i class="fa-solid fa-box text-white"></i></div>
                         <div>
                             <div class="font-bold text-2xl tracking-tight">YOUR CRATE IS READY</div>
-                            <div class="text-xs text-amber-400/70">Advanced yt-dlp • Incremental sliders • Live AI prompt</div>
+                            <div class="text-xs text-amber-400/70">Advanced yt-dlp • Live sliders • AI prompt</div>
                         </div>
                     </div>
                     <button onclick="hideOutput()" class="text-amber-400/60 hover:text-amber-300 text-sm">CLOSE</button>
@@ -179,7 +145,6 @@ https://soundcloud.com/..."></textarea>
 
                 <div id="warning-box" class="hidden mb-6"></div>
 
-                <!-- Commands -->
                 <div class="mb-6">
                     <div class="flex justify-between items-center mb-2"><div class="section-header">yt-dlp COMMAND</div><button onclick="copyToClipboard('command-output', this)" class="text-xs px-3 py-1 rounded-xl bg-white/5 border border-white/15">COPY</button></div>
                     <pre id="command-output" class="command-pre p-5 rounded-2xl text-sm overflow-x-auto text-emerald-300"></pre>
@@ -190,46 +155,35 @@ https://soundcloud.com/..."></textarea>
                     <pre id="wrapper-output" class="command-pre p-5 rounded-2xl text-sm overflow-x-auto text-amber-300"></pre>
                 </div>
 
-                <div id="paths-section" class="hidden mb-6">
-                    <div class="section-header mb-2">LOCAL FILE PATH SUGGESTIONS</div>
-                    <pre id="paths-output" class="command-pre p-5 rounded-2xl text-sm text-amber-200/90"></pre>
-                </div>
-
-                <!-- INCREMENTAL SLIDERS -->
+                <!-- SLIDERS -->
                 <div class="mb-6">
                     <div class="flex items-center justify-between mb-4">
                         <div class="section-header flex items-center gap-x-2">
-                            <i class="fa-solid fa-sliders-h"></i> 
-                            INCREMENTAL PROCESSING CONTROLS
-                            <span class="text-[10px] text-amber-400/60 ml-2">(zero = neutral • drag to adjust intensity)</span>
+                            <i class="fa-solid fa-sliders-h"></i> INCREMENTAL PROCESSING CONTROLS
                         </div>
                         <button onclick="resetAllSliders()" class="text-xs px-3 py-1 rounded-xl bg-white/10 hover:bg-white/15 border border-white/20">RESET TO NEUTRAL</button>
                     </div>
 
-                    <!-- Sliders Container -->
                     <div id="slider-controls" class="space-y-3"></div>
 
-                    <!-- Live Summary -->
                     <div class="mt-4">
                         <div class="section-header mb-2">CURRENT PROCESSING (live)</div>
                         <div id="processing-summary" class="command-pre p-4 rounded-2xl text-sm text-amber-200/90 min-h-[60px]"></div>
                     </div>
 
-                    <!-- Editable AI Prompt -->
                     <div class="mt-4">
                         <div class="flex justify-between mb-2">
-                            <div class="section-header">FINAL AI POST-PROCESSING PROMPT (updates live from sliders)</div>
+                            <div class="section-header">FINAL AI POST-PROCESSING PROMPT</div>
                             <button onclick="copyToClipboard('postprompt-textarea', this)" class="text-xs px-3 py-1 rounded-xl bg-white/5 border border-white/15">COPY</button>
                         </div>
                         <textarea id="postprompt-textarea" rows="8" class="command-pre w-full p-5 rounded-2xl text-sm text-amber-200/90 resize-y"></textarea>
-                        <div class="text-[10px] text-amber-400/60 mt-1 px-1">Sliders control warmth, air, compression, stems (vox/inst/drums), gift edits etc. • Values appear in the prompt</div>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="max-w-5xl mx-auto px-6 pb-10 text-center">
-            <div class="text-[10px] tracking-[1.5px] text-amber-400/60">for CHLO &amp; MIMI with all of my love • CRATE JUICE™ Since ’23 • Sundayjuice v3.2 — Incremental Sliders</div>
+            <div class="text-[10px] tracking-[1.5px] text-amber-400/60">for CHLO &amp; MIMI • CRATE JUICE™ Since ’23 • Sundayjuice v3.2</div>
         </div>
     </div>
 
@@ -237,72 +191,18 @@ https://soundcloud.com/..."></textarea>
         let currentFormat = 'mp3';
 
         const processingControls = [
-            {
-                id: 'warmth',
-                label: 'Warmth EQ + Analog CD',
-                desc: 'Analog warmth / body (negative = cooler, positive = warmer)',
-                min: -6,
-                max: 6,
-                step: 0.5,
-                default: 2.5,
-                unit: 'dB',
-                format: (v) => v >= 0 ? `+${v} dB analog warmth boost @ ~95 Hz + CD polish` : `${v} dB cooler/analytical EQ`
-            },
-            {
-                id: 'air',
-                label: 'Air / Sparkle',
-                desc: 'High-end air and presence',
-                min: -3,
-                max: 6,
-                step: 0.5,
-                default: 2.0,
-                unit: 'dB',
-                format: (v) => v >= 0 ? `+${v} dB gentle air & sparkle (8–12 kHz)` : `${v} dB rolled-off highs`
-            },
-            {
-                id: 'compression',
-                label: 'Compression Ratio',
-                desc: 'Musical dynamic control',
-                min: 1.0,
-                max: 6.0,
-                step: 0.1,
-                default: 3.0,
-                unit: ':1',
-                format: (v) => v > 1.1 ? `${v}:1 ratio, musical dynamics, medium attack` : 'No compression (natural dynamics)'
-            },
-            {
-                id: 'normalize',
-                label: 'Normalize Level',
-                desc: 'Target loudness',
-                min: -3.0,
-                max: 0.0,
-                step: 0.1,
-                default: -1.0,
-                unit: 'dBTP',
-                format: (v) => `Normalize to ${v} dBTP for consistent crate loudness`
-            },
-            {
-                id: 'stems',
-                label: 'Stem Separation (Vox / Inst / Drums)',
-                desc: 'How much to emphasize clean stem splits',
-                min: 0,
-                max: 10,
-                step: 1,
-                default: 4,
-                unit: '',
-                format: (v) => v === 0 ? 'No stem separation' : `Prepare clean vocal / instrumental / drums splits (intensity ${v}/10)`
-            },
-            {
-                id: 'gift',
-                label: 'Emotional Gift Highlights',
-                desc: 'Short emotional edits + voice overlays',
-                min: 0,
-                max: 10,
-                step: 1,
-                default: 3,
-                unit: '',
-                format: (v) => v === 0 ? 'No gift edits' : `Suggest ${v * 8}–${v * 12}s emotional gift edits or voice-note overlays`
-            }
+            { id: 'warmth', label: 'Warmth EQ + Analog CD', min: -6, max: 6, step: 0.5, default: 2.5, unit: 'dB',
+              format: v => v >= 0 ? `+${v} dB analog warmth + CD polish` : `${v} dB cooler EQ` },
+            { id: 'air', label: 'Air / Sparkle', min: -3, max: 6, step: 0.5, default: 2.0, unit: 'dB',
+              format: v => v >= 0 ? `+${v} dB air & sparkle` : `${v} dB rolled off` },
+            { id: 'compression', label: 'Compression Ratio', min: 1.0, max: 6.0, step: 0.1, default: 3.0, unit: ':1',
+              format: v => v > 1.1 ? `${v}:1 musical compression` : 'No compression' },
+            { id: 'normalize', label: 'Normalize Level', min: -3.0, max: 0.0, step: 0.1, default: -1.0, unit: 'dBTP',
+              format: v => `Normalize to ${v} dBTP` },
+            { id: 'stems', label: 'Stem Separation (Vox/Inst/Drums)', min: 0, max: 10, step: 1, default: 4, unit: '',
+              format: v => v === 0 ? 'No stem separation' : `Stem splits intensity ${v}/10` },
+            { id: 'gift', label: 'Emotional Gift Highlights', min: 0, max: 10, step: 1, default: 3, unit: '',
+              format: v => v === 0 ? 'No gift edits' : `${v*8}–${v*12}s emotional edits` }
         ];
 
         function createSliderControls() {
@@ -314,20 +214,11 @@ https://soundcloud.com/..."></textarea>
                 div.className = 'post-control';
                 div.innerHTML = `
                     <div class="flex justify-between items-baseline mb-1.5">
-                        <div>
-                            <div class="font-medium text-sm">${ctrl.label}</div>
-                            <div class="text-[10px] text-amber-400/70">${ctrl.desc}</div>
-                        </div>
+                        <div class="font-medium text-sm">${ctrl.label}</div>
                         <div class="slider-value font-mono" id="val-${ctrl.id}"></div>
                     </div>
                     <div class="slider-row">
-                        <input type="range" 
-                               id="slider-${ctrl.id}" 
-                               min="${ctrl.min}" 
-                               max="${ctrl.max}" 
-                               step="${ctrl.step}" 
-                               value="${ctrl.default}"
-                               class="w-full">
+                        <input type="range" id="slider-${ctrl.id}" min="${ctrl.min}" max="${ctrl.max}" step="${ctrl.step}" value="${ctrl.default}" class="w-full">
                     </div>
                 `;
                 container.appendChild(div);
@@ -335,23 +226,19 @@ https://soundcloud.com/..."></textarea>
                 const slider = div.querySelector(`#slider-${ctrl.id}`);
                 const valEl = div.querySelector(`#val-${ctrl.id}`);
 
-                function updateValue() {
-                    const v = parseFloat(slider.value);
-                    let display = v.toFixed(ctrl.step < 1 ? 1 : 0);
-                    if (ctrl.unit) display += ctrl.unit;
-                    if (ctrl.id === 'warmth' || ctrl.id === 'air' || ctrl.id === 'normalize') {
-                        if (v > 0) display = '+' + display;
-                    }
-                    valEl.textContent = display;
+                function updateVal() {
+                    let v = parseFloat(slider.value);
+                    let txt = v.toFixed(ctrl.step < 1 ? 1 : 0) + ctrl.unit;
+                    if ((ctrl.id === 'warmth' || ctrl.id === 'air' || ctrl.id === 'normalize') && v > 0) txt = '+' + txt;
+                    valEl.textContent = txt;
                 }
 
                 slider.oninput = () => {
-                    updateValue();
+                    updateVal();
                     updateProcessingSummary();
                     updateFinalPrompt();
                 };
-
-                updateValue();
+                updateVal();
             });
         }
 
@@ -363,69 +250,45 @@ https://soundcloud.com/..."></textarea>
         function updateProcessingSummary() {
             const el = document.getElementById('processing-summary');
             let lines = [];
-
             processingControls.forEach(ctrl => {
                 const v = getSliderValue(ctrl.id);
-                const isDefault = Math.abs(v - ctrl.default) < 0.01;
-                if (!isDefault || ctrl.id === 'warmth' || ctrl.id === 'stems') {
-                    const text = ctrl.format(v);
-                    if (text && text.length > 3) lines.push(`• ${text}`);
+                if (Math.abs(v - ctrl.default) > 0.01) {
+                    lines.push(`• ${ctrl.format(v)}`);
                 }
             });
-
-            el.textContent = lines.length > 0 ? lines.join('\n') : 'All controls at neutral. Drag sliders to shape the sound.';
+            el.textContent = lines.length ? lines.join('\n') : 'All controls at neutral.';
         }
 
         function updateFinalPrompt() {
             const ta = document.getElementById('postprompt-textarea');
-            let prompt = `Take these tracks. Detect BPM and musical key. `;
+            let p = `Take these tracks. Detect BPM and musical key. `;
 
-            const warmth = getSliderValue('warmth');
-            const air = getSliderValue('air');
-            const comp = getSliderValue('compression');
-            const norm = getSliderValue('normalize');
-            const stems = getSliderValue('stems');
-            const gift = getSliderValue('gift');
+            const w = getSliderValue('warmth');
+            const a = getSliderValue('air');
+            const c = getSliderValue('compression');
+            const n = getSliderValue('normalize');
+            const s = getSliderValue('stems');
+            const g = getSliderValue('gift');
 
-            if (Math.abs(warmth) > 0.3) {
-                prompt += `Apply ${warmth >= 0 ? '+' : ''}${warmth} dB analog-style warmth EQ boost centered around 90–110 Hz with gentle CD-style mastering polish. `;
-            }
-            if (Math.abs(air) > 0.3) {
-                prompt += `Add ${air >= 0 ? '+' : ''}${air} dB gentle high-end air and sparkle (8–12 kHz). `;
-            }
-            if (comp > 1.2) {
-                prompt += `Apply musical compression at ${comp.toFixed(1)}:1 ratio with medium attack and release. `;
-            }
-            if (Math.abs(norm) > 0.05) {
-                prompt += `Normalize to ${norm} dBTP for consistent, loudness-matched crate playback. `;
-            }
+            if (Math.abs(w) > 0.3) p += `Apply ${w >= 0 ? '+' : ''}${w} dB analog warmth EQ + CD-style polish. `;
+            if (Math.abs(a) > 0.3) p += `Add ${a >= 0 ? '+' : ''}${a} dB air and sparkle. `;
+            if (c > 1.2) p += `Apply ${c.toFixed(1)}:1 musical compression. `;
+            if (Math.abs(n) > 0.05) p += `Normalize to ${n} dBTP. `;
+            if (s > 1) p += `Prepare clean vocal/instrumental/drums stem splits (intensity ${s}/10). `;
+            if (g > 1) p += `Create ${g*8}–${g*12}s emotional gift edits. `;
 
-            prompt += `Add rich metadata (BPM, key, energy, mood, date) and Crate Juice “Since ’23” branding. `;
-
-            if (stems > 1) {
-                prompt += `Prepare clean vocal / instrumental / drums stem splits (separation intensity ${stems}/10). `;
-            }
-            if (gift > 1) {
-                const secLow = Math.round(gift * 7);
-                const secHigh = Math.round(gift * 11);
-                prompt += `Create ${secLow}–${secHigh} second emotional gift edits or intimate voice-note overlays. `;
-            }
-
-            prompt += `Keep everything warm, personal, musical and ready for crate digging or live performance.`;
-
-            ta.value = prompt.trim();
+            p += `Add rich metadata and Crate Juice branding. Keep it warm and personal.`;
+            ta.value = p.trim();
         }
 
         function resetAllSliders() {
             processingControls.forEach(ctrl => {
-                const slider = document.getElementById(`slider-${ctrl.id}`);
-                if (slider) {
-                    slider.value = ctrl.default;
-                    slider.dispatchEvent(new Event('input'));
+                const s = document.getElementById(`slider-${ctrl.id}`);
+                if (s) {
+                    s.value = ctrl.default;
+                    s.dispatchEvent(new Event('input'));
                 }
             });
-            updateProcessingSummary();
-            updateFinalPrompt();
         }
 
         function selectFormat(format, element) {
@@ -436,200 +299,62 @@ https://soundcloud.com/..."></textarea>
 
         function copyToClipboard(elementId, btn) {
             const el = document.getElementById(elementId);
-            if (!el) return;
-            const text = (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') ? el.value : el.textContent;
+            const text = el.tagName === 'TEXTAREA' ? el.value : el.textContent;
             navigator.clipboard.writeText(text).then(() => {
                 const orig = btn.innerHTML;
-                btn.innerHTML = '<i class="fa-solid fa-check"></i> COPIED';
-                setTimeout(() => { btn.innerHTML = orig; }, 1600);
-            }).catch(() => {
-                const range = document.createRange();
-                range.selectNodeContents(el);
-                const sel = window.getSelection();
-                sel.removeAllRanges();
-                sel.addRange(range);
-                document.execCommand('copy');
-                sel.removeAllRanges();
-                const orig = btn.innerHTML;
-                btn.innerHTML = '<i class="fa-solid fa-check"></i> COPIED';
-                setTimeout(() => { btn.innerHTML = orig; }, 1600);
+                btn.innerHTML = 'COPIED';
+                setTimeout(() => btn.innerHTML = orig, 1400);
             });
         }
 
         function copySetupCommand() {
-            const setup = `# CRATE GRABBER v3.2 • A-SHELL SETUP
-pip3 install -U yt-dlp
-echo "✅ Ready. Use the generated commands below."`;
-            navigator.clipboard.writeText(setup).then(() => {
-                const toast = document.createElement('div');
-                toast.className = 'fixed bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 bg-emerald-600 text-white text-xs rounded-2xl shadow z-50';
-                toast.textContent = 'Setup copied to clipboard';
-                document.body.appendChild(toast);
-                setTimeout(() => toast.remove(), 2000);
-            });
+            const cmd = `pip3 install -U yt-dlp\necho "Ready"`;
+            navigator.clipboard.writeText(cmd);
         }
 
         function clearAll() {
             document.getElementById('url-input').value = '';
-            const ocr = document.getElementById('ocr-text');
-            if (ocr) ocr.value = '';
             document.getElementById('output-section').classList.add('hidden');
-            document.getElementById('ocr-panel').classList.add('hidden');
-            document.getElementById('warning-box').classList.add('hidden');
-            document.getElementById('paths-section').classList.add('hidden');
         }
 
         function hideOutput() {
             document.getElementById('output-section').classList.add('hidden');
         }
 
-        function hideOCRPanel() {
-            document.getElementById('ocr-panel').classList.add('hidden');
-        }
-
-        function uploadCSV() {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.csv';
-            input.onchange = e => {
-                const file = e.target.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = ev => {
-                    const lines = (ev.target.result || '').split(/\r?\n/).filter(Boolean);
-                    let urls = [];
-                    lines.forEach(l => {
-                        l.split(/[\t,]+/).forEach(p => {
-                            const t = p.trim();
-                            if (t.startsWith('http')) urls.push(t);
-                        });
-                    });
-                    if (urls.length) {
-                        const ta = document.getElementById('url-input');
-                        ta.value = (ta.value ? ta.value + '\n' : '') + [...new Set(urls)].join('\n');
-                    }
-                };
-                reader.readAsText(file);
-            };
-            input.click();
-        }
-
-        function uploadImageForOCR() {
-            document.getElementById('ocr-panel').classList.remove('hidden');
-        }
-
-        function simulateOCR() {
-            document.getElementById('ocr-text').value = `Tracklist photo OCR:
-1. https://youtu.be/_Ihz gAHbB7w
-2. https://soundcloud.com/artist/warm-vibes-track
-3. https://bandcamp.com/track/sunset-crate-2026
-
-Notes: heavy low end, add warmth + air, vox/inst/drums stems if possible.`;
-        }
-
-        function extractAndAddURLs() {
-            const text = document.getElementById('ocr-text').value || '';
-            const urls = [...new Set((text.match(/https?:\/\/[^\s"'<>]+/g) || []))];
-            if (!urls.length) {
-                alert('No URLs found in the text.');
-                return;
-            }
-            const ta = document.getElementById('url-input');
-            const existing = ta.value.trim();
-            const toAdd = urls.filter(u => !existing.includes(u)).join('\n');
-            ta.value = existing ? existing + '\n' + toAdd : toAdd;
-            document.getElementById('ocr-panel').classList.add('hidden');
-        }
-
         function generateCrateCommand() {
             const raw = document.getElementById('url-input').value.trim();
-            if (!raw) {
-                const w = document.getElementById('warning-box');
-                w.innerHTML = `<div class="p-3 rounded-2xl bg-red-950/60 border border-red-500/60 text-sm">Please paste at least one URL.</div>`;
-                w.classList.remove('hidden');
-                setTimeout(() => w.classList.add('hidden'), 3000);
-                return;
-            }
+            if (!raw) return alert('Please paste at least one URL');
 
             const urls = raw.split(/\r?\n/).map(u => u.trim()).filter(Boolean);
             const isPlaylist = document.getElementById('playlist-mode').checked;
-            const includePaths = document.getElementById('include-paths').checked;
             const fmt = currentFormat;
 
-            let ytCmd = 'yt-dlp --concurrent-fragments 16 --retries infinite --embed-metadata --embed-thumbnail --embed-chapters ';
-            let formatDesc = '';
-            let outExt = 'mp3';
+            let cmd = 'yt-dlp --concurrent-fragments 16 --retries infinite --embed-metadata --embed-thumbnail --embed-chapters ';
+            let desc = '';
 
-            if (fmt === 'mp3') {
-                ytCmd += '-x --audio-format mp3 --audio-quality 0 ';
-                formatDesc = 'MP3 high-quality audio crate';
-                outExt = 'mp3';
-            } else if (fmt === 'wav') {
-                ytCmd += '-x --audio-format wav --audio-quality 0 ';
-                formatDesc = 'WAV lossless crate';
-                outExt = 'wav';
-            } else if (fmt === 'vid') {
-                ytCmd += '-f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best" --merge-output-format mp4 ';
-                formatDesc = 'Best video + audio';
-                outExt = 'mp4';
-            } else {
-                ytCmd += '-f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best" --no-merge ';
-                formatDesc = 'Video + separate audio (no merge)';
-                outExt = 'mp4/m4a';
-            }
+            if (fmt === 'mp3') { cmd += '-x --audio-format mp3 --audio-quality 0 '; desc = 'MP3'; }
+            else if (fmt === 'wav') { cmd += '-x --audio-format wav --audio-quality 0 '; desc = 'WAV'; }
+            else if (fmt === 'vid') { cmd += '-f bestvideo+bestaudio --merge-output-format mp4 '; desc = 'Video'; }
+            else { cmd += '-f bestvideo+bestaudio --no-merge '; desc = 'Video + Audio'; }
 
-            if (isPlaylist) ytCmd += '--yes-playlist ';
-            ytCmd += `-o "%(title)s.%(ext)s" ${urls.map(u => `"${u}"`).join(' ')}`;
+            if (isPlaylist) cmd += '--yes-playlist ';
+            cmd += `-o "%(title)s.%(ext)s" ${urls.map(u => `"${u}"`).join(' ')}`;
 
-            const today = new Date().toISOString().slice(0,10).replace(/-/g,'');
-            const wrapper = `cat > ~/crate-grab-${today}.sh << 'GRABEOF'
-#!/bin/bash
-set -e
-echo "🎵 Dropping crate... (${formatDesc})"
-mkdir -p ~/Downloads && cd ~/Downloads
-${ytCmd}
-echo "✅ Crate ready in ~/Downloads"
-ls -lh *.${outExt.split('/')[0]} 2>/dev/null | head -15 || echo "Check ~/Downloads"
-GRABEOF
-chmod +x ~/crate-grab-${today}.sh && ~/crate-grab-${today}.sh`;
+            document.getElementById('command-output').textContent = cmd;
+            document.getElementById('wrapper-output').textContent = `cat > ~/crate.sh << 'EOF'\n${cmd}\nEOF\nbash ~/crate.sh`;
 
-            document.getElementById('command-output').textContent = ytCmd;
-            document.getElementById('wrapper-output').textContent = wrapper;
+            document.getElementById('output-section').classList.remove('hidden');
 
-            const pathsSec = document.getElementById('paths-section');
-            if (includePaths) {
-                document.getElementById('paths-output').textContent = `Suggested paths:\n• ~/Downloads/\n• ~/CrateGrabber/${today}/\n• ~/Music/CrateJuice/`;
-                pathsSec.classList.remove('hidden');
-            } else {
-                pathsSec.classList.add('hidden');
-            }
-
-            const warn = document.getElementById('warning-box');
-            warn.innerHTML = `<div class="p-3 rounded-2xl bg-emerald-950/40 border border-emerald-500/40 text-xs">${formatDesc} • ${urls.length} source(s) • Playlist: ${isPlaylist ? 'ON' : 'OFF'} • Advanced embeds enabled</div>`;
-            warn.classList.remove('hidden');
-
-            const out = document.getElementById('output-section');
-            out.classList.remove('hidden');
-
-            if (!document.getElementById('slider-warmth')) {
-                createSliderControls();
-            }
+            if (!document.getElementById('slider-warmth')) createSliderControls();
             updateProcessingSummary();
             updateFinalPrompt();
-
-            setTimeout(() => out.scrollIntoView({behavior:'smooth', block:'start'}), 60);
         }
 
         function init() {
             createSliderControls();
-            
-            const first = document.querySelector('[data-format="mp3"]');
-            if (first) first.classList.add('active', 'border-orange-400/70');
-
-            const sum = document.getElementById('processing-summary');
-            if (sum) sum.textContent = 'Drag the sliders above to control warmth, air, compression, stems (vox/inst/drums), etc. The AI prompt updates live.';
-
-            console.log('%c[CRATE GRABBER v3.2] Incremental sliders + background image ready', 'color:#854d0e');
+            const firstBtn = document.querySelector('[data-format="mp3"]');
+            if (firstBtn) firstBtn.classList.add('active', 'border-orange-400/70');
+            console.log('%c[CRATE GRABBER v3.2] Clean working version loaded', 'color:#854d0e');
         }
 
         window.onload = init;
