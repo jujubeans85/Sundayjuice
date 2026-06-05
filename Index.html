@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#9f3e0f">
     <meta name="apple-mobile-web-app-title" content="Crate Grabber">
-    <title>CRATE GRABBER • v3.4 • THE STUDIO</title>
+    <title>CRATE GRABBER • v4.0 • THE STUDIO</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -20,7 +20,7 @@
         .section-header { font-size: 13px; letter-spacing: 1.5px; font-weight: 600; color: #fb923c; }
         
         .bg-vignette {
-            background-image: background-image: linear-gradient(to bottom, rgba(15,8,3,0.52), rgba(25,12,5,0.65)), url('crate-grabber-bg.jpg');, url('crate_grabber_bg.jpeg');
+            background-image: linear-gradient(to bottom, rgba(15,8,3,0.52), rgba(25,12,5,0.65)), url('crate-grabber-bg.jpg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -43,7 +43,7 @@
                 </div>
                 <div>
                     <h1 class="graffiti-header text-6xl md:text-7xl font-black tracking-[-3.5px] text-amber-100">CRATE GRABBER</h1>
-                    <p class="text-[11px] text-amber-400/80 -mt-1 tracking-[3px]">v3.4 • THE STUDIO • iOS A-SHELL POWERED</p>
+                    <p class="text-[11px] text-amber-400/80 -mt-1 tracking-[3px]">v4.0 • THE STUDIO • iOS A-SHELL</p>
                 </div>
             </div>
             <button onclick="copySetupCommand()" class="px-5 py-2.5 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/20 text-sm font-semibold flex items-center gap-x-2 active:scale-[0.985]">
@@ -53,10 +53,10 @@
 
         <div class="max-w-5xl mx-auto px-6 pb-12">
             <div class="mb-8 text-center">
-                <p class="text-xl text-amber-200/90 max-w-lg mx-auto">Drop URLs • Auto-clean links • More faders • Live AI prompt</p>
+                <p class="text-xl text-amber-200/90 max-w-lg mx-auto">Drop URLs • Auto-clean links • 10 faders • Live AI prompt</p>
             </div>
 
-            <!-- Input Card -->
+            <!-- Input -->
             <div class="glass rounded-3xl p-8 md:p-10 shadow-2xl">
                 <div class="flex flex-wrap gap-2 mb-5">
                     <button onclick="uploadCSV()" class="px-4 py-2 text-xs rounded-2xl bg-white/5 hover:bg-white/10 border border-white/15 flex items-center gap-x-2">Upload CSV</button>
@@ -87,4 +87,225 @@
                     </div>
                 </div>
 
-                <button onclick="generateCrateCommand()" class="studio-btn w-full py-7 rounded-3xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 text-white
+                <button onclick="generateCrateCommand()" class="studio-btn w-full py-7 rounded-3xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 text-white font-black text-3xl tracking-[-1.5px] flex items-center justify-center gap-x-4 active:scale-[0.985]">
+                    🪕 DROP TO CRATE
+                </button>
+            </div>
+
+            <!-- OUTPUT -->
+            <div id="output-section" class="hidden mt-8 glass rounded-3xl p-8 md:p-10">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="font-bold text-2xl">YOUR CRATE IS READY</div>
+                    <button onclick="hideOutput()" class="text-amber-400/60">CLOSE</button>
+                </div>
+
+                <div id="warning-box" class="hidden mb-6"></div>
+
+                <div class="mb-6">
+                    <div class="flex justify-between mb-2"><div class="section-header">yt-dlp COMMAND</div><button onclick="copyToClipboard('command-output', this)" class="text-xs px-3 py-1 rounded-xl bg-white/5 border border-white/15">COPY</button></div>
+                    <pre id="command-output" class="command-pre p-5 rounded-2xl text-sm overflow-x-auto text-emerald-300"></pre>
+                </div>
+
+                <div class="mb-6">
+                    <div class="flex justify-between mb-2"><div class="section-header">A-SHELL WRAPPER (copy &amp; paste)</div><button onclick="copyToClipboard('wrapper-output', this)" class="text-xs px-3 py-1 rounded-xl bg-white/5 border border-white/15">COPY</button></div>
+                    <pre id="wrapper-output" class="command-pre p-5 rounded-2xl text-sm overflow-x-auto text-amber-300"></pre>
+                </div>
+
+                <!-- FADERS -->
+                <div>
+                    <div class="flex justify-between items-center mb-3">
+                        <div class="section-header">INCREMENTAL PROCESSING (10 faders)</div>
+                        <button onclick="resetAllSliders()" class="text-xs px-3 py-1 rounded-xl bg-white/10 border border-white/20">RESET ALL</button>
+                    </div>
+
+                    <div id="slider-controls" class="space-y-3"></div>
+
+                    <div class="mt-4">
+                        <div class="section-header mb-2">FINAL AI POST-PROCESSING PROMPT (updates live)</div>
+                        <textarea id="postprompt-textarea" rows="9" class="command-pre w-full p-5 rounded-2xl text-sm text-amber-200/90 resize-y"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentFormat = 'mp3';
+
+        // === v4 FADER DEFINITIONS ===
+        const processingControls = [
+            { id: 'warmth',     label: 'Warmth EQ + Analog CD',        min: -6, max: 6,   step: 0.5, default: 2.5, unit: 'dB' },
+            { id: 'bass',       label: 'Bass Boost',                   min: -3, max: 6,   step: 0.5, default: 1.5, unit: 'dB' },
+            { id: 'air',        label: 'Air / Sparkle',                min: -3, max: 6,   step: 0.5, default: 2.0, unit: 'dB' },
+            { id: 'compression',label: 'Compression Ratio',            min: 1,  max: 6,   step: 0.1, default: 3.0, unit: ':1' },
+            { id: 'normalize',  label: 'Normalize Level',              min: -3, max: 0,   step: 0.1, default: -1.0, unit: 'dBTP' },
+            { id: 'stems',      label: 'Stem Separation (Vox/Inst/Drums)', min: 0, max: 10, step: 1, default: 4, unit: '' },
+            { id: 'vocal',      label: 'Vocal Presence & Clarity',     min: 0,  max: 10,  step: 1, default: 5, unit: '' },
+            { id: 'stereo',     label: 'Stereo Width',                 min: 0,  max: 10,  step: 1, default: 5, unit: '' },
+            { id: 'saturation', label: 'Saturation / Drive',           min: 0,  max: 8,   step: 1, default: 2, unit: '' },
+            { id: 'gift',       label: 'Emotional Gift Highlights',    min: 0,  max: 10,  step: 1, default: 3, unit: '' }
+        ];
+
+        function createSliderControls() {
+            const container = document.getElementById('slider-controls');
+            container.innerHTML = '';
+
+            processingControls.forEach(ctrl => {
+                const div = document.createElement('div');
+                div.className = 'post-control';
+                div.innerHTML = `
+                    <div class="flex justify-between mb-1">
+                        <div class="font-medium text-sm">${ctrl.label}</div>
+                        <div class="slider-value" id="val-${ctrl.id}"></div>
+                    </div>
+                    <input type="range" id="slider-${ctrl.id}" min="${ctrl.min}" max="${ctrl.max}" step="${ctrl.step}" value="${ctrl.default}" class="w-full">
+                `;
+                container.appendChild(div);
+
+                const slider = div.querySelector(`#slider-${ctrl.id}`);
+                const valEl = div.querySelector(`#val-${ctrl.id}`);
+
+                slider.oninput = () => {
+                    updateValueDisplay(ctrl, slider, valEl);
+                    updateFinalPrompt();
+                };
+                updateValueDisplay(ctrl, slider, valEl);
+            });
+        }
+
+        function updateValueDisplay(ctrl, slider, valEl) {
+            let v = parseFloat(slider.value);
+            let txt = v.toFixed(ctrl.step < 1 ? 1 : 0) + ctrl.unit;
+            if ((ctrl.id === 'warmth' || ctrl.id === 'bass' || ctrl.id === 'air' || ctrl.id === 'normalize') && v > 0) txt = '+' + txt;
+            valEl.textContent = txt;
+        }
+
+        function getSliderValue(id) {
+            const el = document.getElementById(`slider-${id}`);
+            return el ? parseFloat(el.value) : 0;
+        }
+
+        // === BEST PROMPT GENERATION (v4) ===
+        function updateFinalPrompt() {
+            const ta = document.getElementById('postprompt-textarea');
+            let p = `Take these tracks. Detect BPM and musical key. `;
+
+            const w  = getSliderValue('warmth');
+            const b  = getSliderValue('bass');
+            const a  = getSliderValue('air');
+            const c  = getSliderValue('compression');
+            const n  = getSliderValue('normalize');
+            const s  = getSliderValue('stems');
+            const v  = getSliderValue('vocal');
+            const st = getSliderValue('stereo');
+            const sat = getSliderValue('saturation');
+            const g  = getSliderValue('gift');
+
+            if (Math.abs(w) > 0.3)  p += `Apply ${w >= 0 ? '+' : ''}${w} dB analog warmth EQ with CD-style polish. `;
+            if (Math.abs(b) > 0.3)  p += `Boost bass by ${b >= 0 ? '+' : ''}${b} dB with tight low-end control. `;
+            if (Math.abs(a) > 0.3)  p += `Add gentle high-end air and sparkle. `;
+            if (c > 1.2)            p += `Apply musical compression at ${c.toFixed(1)}:1 ratio. `;
+            if (Math.abs(n) > 0.05) p += `Normalize to ${n} dBTP for consistent loudness. `;
+            if (s > 1)              p += `Prepare clean vocal / instrumental / drums stem splits. `;
+            if (v > 1)              p += `Enhance vocal presence and clarity. `;
+            if (st > 1)             p += `Increase stereo width (intensity ${st}/10). `;
+            if (sat > 1)            p += `Add analog-style saturation and drive (intensity ${sat}/10). `;
+            if (g > 1)              p += `Create emotional ${g * 8}–${g * 12}s gift edits or intimate voice overlays. `;
+
+            p += `Keep everything warm, personal, musical and ready for crate digging or live performance. Add rich metadata (BPM, key, energy, mood).`;
+
+            ta.value = p.trim();
+        }
+
+        function resetAllSliders() {
+            processingControls.forEach(ctrl => {
+                const s = document.getElementById(`slider-${ctrl.id}`);
+                if (s) s.value = ctrl.default;
+            });
+            updateFinalPrompt();
+        }
+
+        function selectFormat(format, element) {
+            currentFormat = format;
+            document.querySelectorAll('.format-btn').forEach(btn => btn.classList.remove('active', 'border-orange-400/70'));
+            if (element) element.classList.add('active', 'border-orange-400/70');
+        }
+
+        function copyToClipboard(elementId, btn) {
+            const el = document.getElementById(elementId);
+            const text = el.tagName === 'TEXTAREA' ? el.value : el.textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                const orig = btn.innerHTML;
+                btn.innerHTML = 'COPIED';
+                setTimeout(() => btn.innerHTML = orig, 1200);
+            });
+        }
+
+        function copySetupCommand() {
+            navigator.clipboard.writeText(`pip3 install -U yt-dlp`);
+        }
+
+        function clearAll() {
+            document.getElementById('url-input').value = '';
+            document.getElementById('output-section').classList.add('hidden');
+        }
+
+        function hideOutput() {
+            document.getElementById('output-section').classList.add('hidden');
+        }
+
+        function generateCrateCommand() {
+            let raw = document.getElementById('url-input').value.trim();
+            if (!raw) return alert('Please paste at least one URL');
+
+            // Auto-clean URLs
+            const urls = raw.split(/\r?\n/)
+                .map(u => u.trim())
+                .filter(Boolean)
+                .map(url => {
+                    try {
+                        const u = new URL(url);
+                        ['si','utm_source','utm_medium','utm_campaign','feature','pp'].forEach(p => u.searchParams.delete(p));
+                        return u.toString();
+                    } catch { return url; }
+                });
+
+            const isPlaylist = document.getElementById('playlist-mode').checked;
+            const fmt = currentFormat;
+
+            let cmd = 'yt-dlp --concurrent-fragments 16 --retries infinite --embed-metadata --embed-thumbnail --embed-chapters ';
+            if (fmt === 'mp3') cmd += '-x --audio-format mp3 --audio-quality 0 ';
+            else if (fmt === 'wav') cmd += '-x --audio-format wav --audio-quality 0 ';
+            else if (fmt === 'vid') cmd += '-f bestvideo+bestaudio --merge-output-format mp4 ';
+            else cmd += '-f bestvideo+bestaudio --no-merge ';
+
+            if (isPlaylist) cmd += '--yes-playlist ';
+            cmd += `-o "%(title)s.%(ext)s" ${urls.map(u => `"${u}"`).join(' ')}`;
+
+            const wrapper = `cat > ~/Downloads/crate.sh << 'EOF'
+${cmd}
+EOF
+chmod +x ~/Downloads/crate.sh
+echo "✅ Script created at ~/Downloads/crate.sh"
+bash ~/Downloads/crate.sh`;
+
+            document.getElementById('command-output').textContent = cmd;
+            document.getElementById('wrapper-output').textContent = wrapper;
+
+            document.getElementById('output-section').classList.remove('hidden');
+
+            if (!document.getElementById('slider-warmth')) createSliderControls();
+            updateFinalPrompt();
+        }
+
+        function init() {
+            createSliderControls();
+            const first = document.querySelector('[data-format="mp3"]');
+            if (first) first.classList.add('active', 'border-orange-400/70');
+            console.log('%c[CRATE GRABBER v4.0] Clean reliable version loaded', 'color:#854d0e');
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
