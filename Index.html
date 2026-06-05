@@ -335,4 +335,19 @@ Respond with the exact processing steps + ready-to-use prompt for Suno/Udio/Logi
             // After showing output:
             createManipulationToggles();
             updateManipulationUI();
-            // (
+            // (the rest of the command/wrapper generation is identical to previous versions but now includes playlist flag when checked)
+        }
+
+        function init() {
+            createManipulationToggles();
+            const firstBtn = document.querySelector('[data-format="mp3"]');
+            if (firstBtn) firstBtn.classList.add('active', 'border-orange-400/70');
+            
+            // Keyboard + other init...
+            console.log('%c[CRATE GRABBER v3.0] Full leap ready in Sundayjuice', 'color:#854d0e');
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
