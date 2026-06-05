@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#9f3e0f">
     <meta name="apple-mobile-web-app-title" content="Crate Grabber">
-    <title>CRATE GRABBER • v4.0 • THE STUDIO</title>
+    <title>CRATE GRABBER • v4.4 • THE STUDIO</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -43,7 +43,7 @@
                 </div>
                 <div>
                     <h1 class="graffiti-header text-6xl md:text-7xl font-black tracking-[-3.5px] text-amber-100">CRATE GRABBER</h1>
-                    <p class="text-[11px] text-amber-400/80 -mt-1 tracking-[3px]">v4.0 • THE STUDIO • iOS A-SHELL</p>
+                    <p class="text-[11px] text-amber-400/80 -mt-1 tracking-[3px]">v4.4 • THE STUDIO • iPAD + MAC PIPELINE</p>
                 </div>
             </div>
             <button onclick="copySetupCommand()" class="px-5 py-2.5 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/20 text-sm font-semibold flex items-center gap-x-2 active:scale-[0.985]">
@@ -53,7 +53,7 @@
 
         <div class="max-w-5xl mx-auto px-6 pb-12">
             <div class="mb-8 text-center">
-                <p class="text-xl text-amber-200/90 max-w-lg mx-auto">Drop URLs • Auto-clean links • 10 faders • Live AI prompt</p>
+                <p class="text-xl text-amber-200/90 max-w-lg mx-auto">Drop URLs • Auto-clean • Advanced Rhythmic + Stem Pipeline</p>
             </div>
 
             <!-- Input -->
@@ -101,28 +101,50 @@
 
                 <div id="warning-box" class="hidden mb-6"></div>
 
+                <!-- Commands -->
                 <div class="mb-6">
                     <div class="flex justify-between mb-2"><div class="section-header">yt-dlp COMMAND</div><button onclick="copyToClipboard('command-output', this)" class="text-xs px-3 py-1 rounded-xl bg-white/5 border border-white/15">COPY</button></div>
                     <pre id="command-output" class="command-pre p-5 rounded-2xl text-sm overflow-x-auto text-emerald-300"></pre>
                 </div>
 
                 <div class="mb-6">
-                    <div class="flex justify-between mb-2"><div class="section-header">A-SHELL WRAPPER (copy &amp; paste)</div><button onclick="copyToClipboard('wrapper-output', this)" class="text-xs px-3 py-1 rounded-xl bg-white/5 border border-white/15">COPY</button></div>
+                    <div class="flex justify-between mb-2"><div class="section-header">A-SHELL + PIPELINE WRAPPER</div><button onclick="copyToClipboard('wrapper-output', this)" class="text-xs px-3 py-1 rounded-xl bg-white/5 border border-white/15">COPY</button></div>
                     <pre id="wrapper-output" class="command-pre p-5 rounded-2xl text-sm overflow-x-auto text-amber-300"></pre>
                 </div>
 
-                <!-- FADERS -->
+                <!-- Pipeline Options -->
+                <div class="mb-6 p-5 rounded-2xl border border-white/10 bg-black/30">
+                    <div class="section-header mb-3">POST-PROCESSING PIPELINE (iPad → Mac)</div>
+                    
+                    <div class="space-y-2 text-sm">
+                        <label class="flex items-center gap-x-2">
+                            <input type="checkbox" id="open-logic" class="accent-orange-500"> 
+                            <span>Open in Logic Pro after download</span>
+                        </label>
+                        <label class="flex items-center gap-x-2">
+                            <input type="checkbox" id="open-djay" class="accent-orange-500"> 
+                            <span>Open in djay Pro after download</span>
+                        </label>
+                        <label class="flex items-center gap-x-2">
+                            <input type="checkbox" id="stem-separation" class="accent-orange-500" checked> 
+                            <span>Prepare for high-quality stem separation (UVR5 + BS-RoFormer)</span>
+                        </label>
+                    </div>
+                    <div class="text-[10px] text-amber-400/70 mt-2">These options add commands to the wrapper above. Run on Mac for best results.</div>
+                </div>
+
+                <!-- Faders -->
                 <div>
                     <div class="flex justify-between items-center mb-3">
-                        <div class="section-header">INCREMENTAL PROCESSING (10 faders)</div>
+                        <div class="section-header">INCREMENTAL PROCESSING (15 faders)</div>
                         <button onclick="resetAllSliders()" class="text-xs px-3 py-1 rounded-xl bg-white/10 border border-white/20">RESET ALL</button>
                     </div>
 
                     <div id="slider-controls" class="space-y-3"></div>
 
                     <div class="mt-4">
-                        <div class="section-header mb-2">FINAL AI POST-PROCESSING PROMPT (updates live)</div>
-                        <textarea id="postprompt-textarea" rows="9" class="command-pre w-full p-5 rounded-2xl text-sm text-amber-200/90 resize-y"></textarea>
+                        <div class="section-header mb-2">FINAL AI POST-PROCESSING PROMPT (live)</div>
+                        <textarea id="postprompt-textarea" rows="11" class="command-pre w-full p-5 rounded-2xl text-sm text-amber-200/90 resize-y"></textarea>
                     </div>
                 </div>
             </div>
@@ -132,24 +154,34 @@
     <script>
         let currentFormat = 'mp3';
 
-        // === v4 FADER DEFINITIONS ===
         const processingControls = [
-            { id: 'warmth',     label: 'Warmth EQ + Analog CD',        min: -6, max: 6,   step: 0.5, default: 2.5, unit: 'dB' },
-            { id: 'bass',       label: 'Bass Boost',                   min: -3, max: 6,   step: 0.5, default: 1.5, unit: 'dB' },
-            { id: 'air',        label: 'Air / Sparkle',                min: -3, max: 6,   step: 0.5, default: 2.0, unit: 'dB' },
-            { id: 'compression',label: 'Compression Ratio',            min: 1,  max: 6,   step: 0.1, default: 3.0, unit: ':1' },
-            { id: 'normalize',  label: 'Normalize Level',              min: -3, max: 0,   step: 0.1, default: -1.0, unit: 'dBTP' },
-            { id: 'stems',      label: 'Stem Separation (Vox/Inst/Drums)', min: 0, max: 10, step: 1, default: 4, unit: '' },
-            { id: 'vocal',      label: 'Vocal Presence & Clarity',     min: 0,  max: 10,  step: 1, default: 5, unit: '' },
-            { id: 'stereo',     label: 'Stereo Width',                 min: 0,  max: 10,  step: 1, default: 5, unit: '' },
-            { id: 'saturation', label: 'Saturation / Drive',           min: 0,  max: 8,   step: 1, default: 2, unit: '' },
-            { id: 'gift',       label: 'Emotional Gift Highlights',    min: 0,  max: 10,  step: 1, default: 3, unit: '' }
+            { id: 'warmth', label: 'Warmth EQ + Analog CD', min: -6, max: 6, step: 0.5, default: 2.5, unit: 'dB' },
+            { id: 'bass', label: 'Bass Boost', min: -3, max: 6, step: 0.5, default: 1.5, unit: 'dB' },
+            { id: 'air', label: 'Air / Sparkle', min: -3, max: 6, step: 0.5, default: 2.0, unit: 'dB' },
+            { id: 'compression', label: 'Compression Ratio', min: 1, max: 6, step: 0.1, default: 3.0, unit: ':1' },
+            { id: 'normalize', label: 'Normalize Level', min: -3, max: 0, step: 0.1, default: -1.0, unit: 'dBTP' },
+
+            // Rhythmic
+            { id: 'swing', label: 'Swing', min: 0, max: 10, step: 1, default: 3, unit: '' },
+            { id: 'swagger', label: 'Swagger / Bounce', min: 0, max: 10, step: 1, default: 4, unit: '' },
+            { id: 'tightness', label: 'Tight vs Loose Feel', min: 0, max: 10, step: 1, default: 5, unit: '' },
+            { id: 'drag', label: 'Drag / Layback', min: 0, max: 10, step: 1, default: 3, unit: '' },
+            { id: 'quantize', label: 'Quantize Amount', min: 0, max: 10, step: 1, default: 4, unit: '' },
+            { id: 'humanize', label: 'Humanization / Micro-timing', min: 0, max: 10, step: 1, default: 5, unit: '' },
+            { id: 'pocket', label: 'Pocket / Groove Feel', min: 0, max: 10, step: 1, default: 5, unit: '' },
+            { id: 'shuffle', label: 'Shuffle Amount', min: 0, max: 10, step: 1, default: 2, unit: '' },
+
+            // Other
+            { id: 'stems', label: 'Stem Separation (Vox/Inst/Drums)', min: 0, max: 10, step: 1, default: 4, unit: '' },
+            { id: 'vocal', label: 'Vocal Presence & Clarity', min: 0, max: 10, step: 1, default: 5, unit: '' },
+            { id: 'stereo', label: 'Stereo Width', min: 0, max: 10, step: 1, default: 5, unit: '' },
+            { id: 'saturation', label: 'Saturation / Drive', min: 0, max: 8, step: 1, default: 2, unit: '' },
+            { id: 'gift', label: 'Emotional Gift Highlights', min: 0, max: 10, step: 1, default: 3, unit: '' }
         ];
 
         function createSliderControls() {
             const container = document.getElementById('slider-controls');
             container.innerHTML = '';
-
             processingControls.forEach(ctrl => {
                 const div = document.createElement('div');
                 div.className = 'post-control';
@@ -161,10 +193,8 @@
                     <input type="range" id="slider-${ctrl.id}" min="${ctrl.min}" max="${ctrl.max}" step="${ctrl.step}" value="${ctrl.default}" class="w-full">
                 `;
                 container.appendChild(div);
-
                 const slider = div.querySelector(`#slider-${ctrl.id}`);
                 const valEl = div.querySelector(`#val-${ctrl.id}`);
-
                 slider.oninput = () => {
                     updateValueDisplay(ctrl, slider, valEl);
                     updateFinalPrompt();
@@ -185,35 +215,54 @@
             return el ? parseFloat(el.value) : 0;
         }
 
-        // === BEST PROMPT GENERATION (v4) ===
         function updateFinalPrompt() {
             const ta = document.getElementById('postprompt-textarea');
             let p = `Take these tracks. Detect BPM and musical key. `;
 
-            const w  = getSliderValue('warmth');
-            const b  = getSliderValue('bass');
-            const a  = getSliderValue('air');
-            const c  = getSliderValue('compression');
-            const n  = getSliderValue('normalize');
-            const s  = getSliderValue('stems');
-            const v  = getSliderValue('vocal');
+            const w = getSliderValue('warmth');
+            const b = getSliderValue('bass');
+            const a = getSliderValue('air');
+            const c = getSliderValue('compression');
+            const n = getSliderValue('normalize');
+
+            const sw = getSliderValue('swing');
+            const sg = getSliderValue('swagger');
+            const ti = getSliderValue('tightness');
+            const dr = getSliderValue('drag');
+            const qu = getSliderValue('quantize');
+            const hu = getSliderValue('humanize');
+            const po = getSliderValue('pocket');
+            const sh = getSliderValue('shuffle');
+
+            const s = getSliderValue('stems');
+            const v = getSliderValue('vocal');
             const st = getSliderValue('stereo');
             const sat = getSliderValue('saturation');
-            const g  = getSliderValue('gift');
+            const g = getSliderValue('gift');
 
-            if (Math.abs(w) > 0.3)  p += `Apply ${w >= 0 ? '+' : ''}${w} dB analog warmth EQ with CD-style polish. `;
-            if (Math.abs(b) > 0.3)  p += `Boost bass by ${b >= 0 ? '+' : ''}${b} dB with tight low-end control. `;
-            if (Math.abs(a) > 0.3)  p += `Add gentle high-end air and sparkle. `;
-            if (c > 1.2)            p += `Apply musical compression at ${c.toFixed(1)}:1 ratio. `;
-            if (Math.abs(n) > 0.05) p += `Normalize to ${n} dBTP for consistent loudness. `;
-            if (s > 1)              p += `Prepare clean vocal / instrumental / drums stem splits. `;
-            if (v > 1)              p += `Enhance vocal presence and clarity. `;
-            if (st > 1)             p += `Increase stereo width (intensity ${st}/10). `;
-            if (sat > 1)            p += `Add analog-style saturation and drive (intensity ${sat}/10). `;
-            if (g > 1)              p += `Create emotional ${g * 8}–${g * 12}s gift edits or intimate voice overlays. `;
+            if (Math.abs(w) > 0.3) p += `Apply ${w >= 0 ? '+' : ''}${w} dB analog warmth EQ with CD polish. `;
+            if (Math.abs(b) > 0.3) p += `Boost bass by ${b >= 0 ? '+' : ''}${b} dB with tight low-end. `;
+            if (Math.abs(a) > 0.3) p += `Add gentle high-end air and sparkle. `;
+            if (c > 1.2) p += `Apply musical compression at ${c.toFixed(1)}:1 ratio. `;
+            if (Math.abs(n) > 0.05) p += `Normalize to ${n} dBTP. `;
 
-            p += `Keep everything warm, personal, musical and ready for crate digging or live performance. Add rich metadata (BPM, key, energy, mood).`;
+            // Rhythmic
+            if (sw > 1) p += sw >= 7 ? `Apply strong musical swing with clear triplet groove. ` : `Add moderate swing and laid-back groove. `;
+            if (sg > 1) p += `Add swagger and confident rhythmic bounce (intensity ${sg}/10). `;
+            if (ti !== 5) p += ti > 5 ? `Make rhythm tighter and more locked. ` : `Loosen timing with relaxed human feel. `;
+            if (dr > 1) p += `Add drag / behind-the-beat feel (intensity ${dr}/10). `;
+            if (qu > 1) p += `Apply quantization with human variation (intensity ${qu}/10). `;
+            if (hu > 1) p += `Add micro-timing humanization (intensity ${hu}/10). `;
+            if (po > 1) p += `Enhance pocket and groovy feel (intensity ${po}/10). `;
+            if (sh > 1) p += `Apply shuffle rhythm (intensity ${sh}/10). `;
 
+            if (s > 1) p += `Prepare clean vocal/instrumental/drums stem splits using high-quality models (BS-RoFormer / HTDemucs ensemble recommended). `;
+            if (v > 1) p += `Enhance vocal presence and clarity. `;
+            if (st > 1) p += `Increase stereo width (intensity ${st}/10). `;
+            if (sat > 1) p += `Add saturation and drive (intensity ${sat}/10). `;
+            if (g > 1) p += `Create emotional ${g*8}–${g*12}s gift edits or voice overlays. `;
+
+            p += `Keep everything warm, personal and ready for crate digging or live performance. Add rich metadata.`;
             ta.value = p.trim();
         }
 
@@ -258,17 +307,13 @@
             let raw = document.getElementById('url-input').value.trim();
             if (!raw) return alert('Please paste at least one URL');
 
-            // Auto-clean URLs
-            const urls = raw.split(/\r?\n/)
-                .map(u => u.trim())
-                .filter(Boolean)
-                .map(url => {
-                    try {
-                        const u = new URL(url);
-                        ['si','utm_source','utm_medium','utm_campaign','feature','pp'].forEach(p => u.searchParams.delete(p));
-                        return u.toString();
-                    } catch { return url; }
-                });
+            const urls = raw.split(/\r?\n/).map(u => u.trim()).filter(Boolean).map(url => {
+                try {
+                    const u = new URL(url);
+                    ['si','utm_source','utm_medium','utm_campaign','feature','pp'].forEach(p => u.searchParams.delete(p));
+                    return u.toString();
+                } catch { return url; }
+            });
 
             const isPlaylist = document.getElementById('playlist-mode').checked;
             const fmt = currentFormat;
@@ -282,8 +327,22 @@
             if (isPlaylist) cmd += '--yes-playlist ';
             cmd += `-o "%(title)s.%(ext)s" ${urls.map(u => `"${u}"`).join(' ')}`;
 
+            // Build enhanced wrapper with pipeline options
+            let extraSteps = '';
+            if (document.getElementById('open-logic')?.checked) {
+                extraSteps += `\necho "Opening in Logic Pro..."\nopen -a "Logic Pro" ~/Downloads/*.${fmt === 'mp3' ? 'mp3' : 'wav'}`;
+            }
+            if (document.getElementById('open-djay')?.checked) {
+                extraSteps += `\necho "Opening in djay Pro..."\nopen -a "djay Pro" ~/Downloads/*.${fmt === 'mp3' ? 'mp3' : 'wav'}`;
+            }
+            if (document.getElementById('stem-separation')?.checked) {
+                extraSteps += `\n\necho "For high-quality stem separation on Mac:"\necho "1. Install UVR5 (Ultimate Vocal Remover)"\necho "2. Use BS-RoFormer or HTDemucs + MDX ensemble for best results"\necho "3. Recommended: BS-RoFormer for vocals + HTDemucs for drums/bass"`;
+            }
+
             const wrapper = `cat > ~/Downloads/crate.sh << 'EOF'
 ${cmd}
+${extraSteps}
+echo "✅ Crate ready in ~/Downloads"
 EOF
 chmod +x ~/Downloads/crate.sh
 echo "✅ Script created at ~/Downloads/crate.sh"
@@ -302,7 +361,7 @@ bash ~/Downloads/crate.sh`;
             createSliderControls();
             const first = document.querySelector('[data-format="mp3"]');
             if (first) first.classList.add('active', 'border-orange-400/70');
-            console.log('%c[CRATE GRABBER v4.0] Clean reliable version loaded', 'color:#854d0e');
+            console.log('%c[CRATE GRABBER v4.4] Full pipeline + BS-RoFormer aware version loaded', 'color:#854d0e');
         }
 
         window.onload = init;
