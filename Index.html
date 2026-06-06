@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#9f3e0f">
     <meta name="apple-mobile-web-app-title" content="Crate Grabber">
-    <title>CRATE GRABBER • v4.4 • THE STUDIO</title>
+    <title>CRATE GRABBER • v4.5 • THE STUDIO</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -26,10 +26,24 @@
             background-repeat: no-repeat;
         }
         
+        /* Liquid Glass Sliders */
+        .post-control {
+            background: rgba(255,255,255,0.035);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(251,146,60,0.12);
+            border-radius: 16px;
+            padding: 14px 16px;
+            margin-bottom: 8px;
+            transition: all 0.2s ease;
+        }
+        .post-control:hover {
+            background: rgba(255,255,255,0.055);
+            border-color: rgba(251,146,60,0.2);
+        }
+        
         .slider-row { display: flex; align-items: center; gap: 12px; }
         .slider-row input[type="range"] { flex: 1; accent-color: #fb923c; }
         .slider-value { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 12px; min-width: 52px; text-align: right; color: #fed7aa; }
-        .post-control { background: rgba(0,0,0,0.25); border: 1px solid rgba(251,146,60,0.15); border-radius: 16px; padding: 14px 16px; margin-bottom: 8px; }
     </style>
 </head>
 <body class="warm-gradient text-amber-100 min-h-screen">
@@ -43,7 +57,7 @@
                 </div>
                 <div>
                     <h1 class="graffiti-header text-6xl md:text-7xl font-black tracking-[-3.5px] text-amber-100">CRATE GRABBER</h1>
-                    <p class="text-[11px] text-amber-400/80 -mt-1 tracking-[3px]">v4.4 • THE STUDIO • iPAD + MAC PIPELINE</p>
+                    <p class="text-[11px] text-amber-400/80 -mt-1 tracking-[3px]">v4.5 • THE STUDIO • iPAD + MAC READY</p>
                 </div>
             </div>
             <button onclick="copySetupCommand()" class="px-5 py-2.5 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/20 text-sm font-semibold flex items-center gap-x-2 active:scale-[0.985]">
@@ -53,7 +67,21 @@
 
         <div class="max-w-5xl mx-auto px-6 pb-12">
             <div class="mb-8 text-center">
-                <p class="text-xl text-amber-200/90 max-w-lg mx-auto">Drop URLs • Auto-clean • Advanced Rhythmic + Stem Pipeline</p>
+                <p class="text-xl text-amber-200/90 max-w-lg mx-auto">Drop URLs • Auto-clean • Liquid Glass UI • Max Quality Prompts</p>
+            </div>
+
+            <!-- iPad Workflow -->
+            <div class="glass rounded-3xl p-6 mb-8 border border-white/10">
+                <div class="section-header mb-3 flex items-center gap-x-2">
+                    <i class="fa-solid fa-tablet-screen-button"></i> 
+                    <span>BEST iPAD WORKFLOW (Until September)</span>
+                </div>
+                <div class="text-sm text-amber-200/90 space-y-1">
+                    <div><strong>1. Main tool:</strong> Use <strong>Moises</strong> iOS app for fast, good-quality stems</div>
+                    <div><strong>2. Max quality:</strong> Use <strong>LALAL.AI</strong> in Safari when you need cleaner results</div>
+                    <div><strong>3. Creative work:</strong> Import stems into <strong>Logic Pro for iPad</strong></div>
+                    <div><strong>4. On Mac (September):</strong> Run final high-quality separation in <strong>UVR5 + BS-RoFormer</strong></div>
+                </div>
             </div>
 
             <!-- Input -->
@@ -101,7 +129,6 @@
 
                 <div id="warning-box" class="hidden mb-6"></div>
 
-                <!-- Commands -->
                 <div class="mb-6">
                     <div class="flex justify-between mb-2"><div class="section-header">yt-dlp COMMAND</div><button onclick="copyToClipboard('command-output', this)" class="text-xs px-3 py-1 rounded-xl bg-white/5 border border-white/15">COPY</button></div>
                     <pre id="command-output" class="command-pre p-5 rounded-2xl text-sm overflow-x-auto text-emerald-300"></pre>
@@ -110,27 +137,6 @@
                 <div class="mb-6">
                     <div class="flex justify-between mb-2"><div class="section-header">A-SHELL + PIPELINE WRAPPER</div><button onclick="copyToClipboard('wrapper-output', this)" class="text-xs px-3 py-1 rounded-xl bg-white/5 border border-white/15">COPY</button></div>
                     <pre id="wrapper-output" class="command-pre p-5 rounded-2xl text-sm overflow-x-auto text-amber-300"></pre>
-                </div>
-
-                <!-- Pipeline Options -->
-                <div class="mb-6 p-5 rounded-2xl border border-white/10 bg-black/30">
-                    <div class="section-header mb-3">POST-PROCESSING PIPELINE (iPad → Mac)</div>
-                    
-                    <div class="space-y-2 text-sm">
-                        <label class="flex items-center gap-x-2">
-                            <input type="checkbox" id="open-logic" class="accent-orange-500"> 
-                            <span>Open in Logic Pro after download</span>
-                        </label>
-                        <label class="flex items-center gap-x-2">
-                            <input type="checkbox" id="open-djay" class="accent-orange-500"> 
-                            <span>Open in djay Pro after download</span>
-                        </label>
-                        <label class="flex items-center gap-x-2">
-                            <input type="checkbox" id="stem-separation" class="accent-orange-500" checked> 
-                            <span>Prepare for high-quality stem separation (UVR5 + BS-RoFormer)</span>
-                        </label>
-                    </div>
-                    <div class="text-[10px] text-amber-400/70 mt-2">These options add commands to the wrapper above. Run on Mac for best results.</div>
                 </div>
 
                 <!-- Faders -->
@@ -143,8 +149,8 @@
                     <div id="slider-controls" class="space-y-3"></div>
 
                     <div class="mt-4">
-                        <div class="section-header mb-2">FINAL AI POST-PROCESSING PROMPT (live)</div>
-                        <textarea id="postprompt-textarea" rows="11" class="command-pre w-full p-5 rounded-2xl text-sm text-amber-200/90 resize-y"></textarea>
+                        <div class="section-header mb-2">FINAL AI POST-PROCESSING PROMPT (max quality)</div>
+                        <textarea id="postprompt-textarea" rows="12" class="command-pre w-full p-5 rounded-2xl text-sm text-amber-200/90 resize-y"></textarea>
                     </div>
                 </div>
             </div>
@@ -161,7 +167,6 @@
             { id: 'compression', label: 'Compression Ratio', min: 1, max: 6, step: 0.1, default: 3.0, unit: ':1' },
             { id: 'normalize', label: 'Normalize Level', min: -3, max: 0, step: 0.1, default: -1.0, unit: 'dBTP' },
 
-            // Rhythmic
             { id: 'swing', label: 'Swing', min: 0, max: 10, step: 1, default: 3, unit: '' },
             { id: 'swagger', label: 'Swagger / Bounce', min: 0, max: 10, step: 1, default: 4, unit: '' },
             { id: 'tightness', label: 'Tight vs Loose Feel', min: 0, max: 10, step: 1, default: 5, unit: '' },
@@ -171,7 +176,6 @@
             { id: 'pocket', label: 'Pocket / Groove Feel', min: 0, max: 10, step: 1, default: 5, unit: '' },
             { id: 'shuffle', label: 'Shuffle Amount', min: 0, max: 10, step: 1, default: 2, unit: '' },
 
-            // Other
             { id: 'stems', label: 'Stem Separation (Vox/Inst/Drums)', min: 0, max: 10, step: 1, default: 4, unit: '' },
             { id: 'vocal', label: 'Vocal Presence & Clarity', min: 0, max: 10, step: 1, default: 5, unit: '' },
             { id: 'stereo', label: 'Stereo Width', min: 0, max: 10, step: 1, default: 5, unit: '' },
@@ -240,29 +244,29 @@
             const sat = getSliderValue('saturation');
             const g = getSliderValue('gift');
 
-            if (Math.abs(w) > 0.3) p += `Apply ${w >= 0 ? '+' : ''}${w} dB analog warmth EQ with CD polish. `;
-            if (Math.abs(b) > 0.3) p += `Boost bass by ${b >= 0 ? '+' : ''}${b} dB with tight low-end. `;
+            if (Math.abs(w) > 0.3) p += `Apply ${w >= 0 ? '+' : ''}${w} dB analog warmth EQ with CD-style polish. `;
+            if (Math.abs(b) > 0.3) p += `Boost bass by ${b >= 0 ? '+' : ''}${b} dB with tight low-end control. `;
             if (Math.abs(a) > 0.3) p += `Add gentle high-end air and sparkle. `;
             if (c > 1.2) p += `Apply musical compression at ${c.toFixed(1)}:1 ratio. `;
             if (Math.abs(n) > 0.05) p += `Normalize to ${n} dBTP. `;
 
-            // Rhythmic
-            if (sw > 1) p += sw >= 7 ? `Apply strong musical swing with clear triplet groove. ` : `Add moderate swing and laid-back groove. `;
-            if (sg > 1) p += `Add swagger and confident rhythmic bounce (intensity ${sg}/10). `;
-            if (ti !== 5) p += ti > 5 ? `Make rhythm tighter and more locked. ` : `Loosen timing with relaxed human feel. `;
-            if (dr > 1) p += `Add drag / behind-the-beat feel (intensity ${dr}/10). `;
-            if (qu > 1) p += `Apply quantization with human variation (intensity ${qu}/10). `;
-            if (hu > 1) p += `Add micro-timing humanization (intensity ${hu}/10). `;
-            if (po > 1) p += `Enhance pocket and groovy feel (intensity ${po}/10). `;
-            if (sh > 1) p += `Apply shuffle rhythm (intensity ${sh}/10). `;
+            // Optimized Rhythmic
+            if (sw > 1) p += sw >= 7 ? `Apply strong, musical swing with clear triplet-based groove. ` : `Add moderate swing and laid-back groove. `;
+            if (sg > 1) p += `Add swagger, bounce and confident rhythmic attitude (intensity ${sg}/10). `;
+            if (ti !== 5) p += ti > 5 ? `Make the rhythm tighter and more locked to the grid. ` : `Loosen timing with relaxed, human feel. `;
+            if (dr > 1) p += `Push elements slightly behind the beat for drag/layback feel (intensity ${dr}/10). `;
+            if (qu > 1) p += `Apply light quantization while preserving natural micro-timing (intensity ${qu}/10). `;
+            if (hu > 1) p += `Add micro-timing humanization and organic timing variations (intensity ${hu}/10). `;
+            if (po > 1) p += `Enhance pocket and overall groovy musical feel (intensity ${po}/10). `;
+            if (sh > 1) p += `Apply subtle shuffle rhythm (intensity ${sh}/10). `;
 
-            if (s > 1) p += `Prepare clean vocal/instrumental/drums stem splits using high-quality models (BS-RoFormer / HTDemucs ensemble recommended). `;
+            if (s > 1) p += `Prepare clean vocal/instrumental/drums stem splits using high-quality models (BS-RoFormer + HTDemucs ensemble in UVR5 recommended). `;
             if (v > 1) p += `Enhance vocal presence and clarity. `;
             if (st > 1) p += `Increase stereo width (intensity ${st}/10). `;
-            if (sat > 1) p += `Add saturation and drive (intensity ${sat}/10). `;
-            if (g > 1) p += `Create emotional ${g*8}–${g*12}s gift edits or voice overlays. `;
+            if (sat > 1) p += `Add analog-style saturation and drive (intensity ${sat}/10). `;
+            if (g > 1) p += `Create emotional ${g*8}–${g*12}s gift edits or intimate voice overlays. `;
 
-            p += `Keep everything warm, personal and ready for crate digging or live performance. Add rich metadata.`;
+            p += `Keep everything warm, personal, musical and ready for crate digging or live performance. Add rich metadata (BPM, key, energy, mood).`;
             ta.value = p.trim();
         }
 
@@ -303,6 +307,59 @@
             document.getElementById('output-section').classList.add('hidden');
         }
 
+        // Improved CSV
+        function uploadCSV() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.csv';
+            input.onchange = e => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = ev => {
+                    const lines = (ev.target.result || '').split(/\r?\n/).filter(Boolean);
+                    let urls = [];
+                    lines.forEach(line => {
+                        line.split(/[\t,]+/).forEach(part => {
+                            const trimmed = part.trim();
+                            if (trimmed.startsWith('http')) urls.push(trimmed);
+                        });
+                    });
+                    if (urls.length) {
+                        const ta = document.getElementById('url-input');
+                        const existing = ta.value.trim();
+                        const unique = [...new Set(urls)];
+                        ta.value = existing ? existing + '\n' + unique.join('\n') : unique.join('\n');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        function uploadImageForOCR() {
+            document.getElementById('ocr-panel')?.classList.remove('hidden');
+        }
+
+        function simulateOCR() {
+            const ta = document.getElementById('ocr-text');
+            if (ta) ta.value = `Tracklist photo OCR:\nhttps://youtu.be/Orp4k_YkE5w\nhttps://soundcloud.com/artist/track\nhttps://bandcamp.com/track/sunset-crate`;
+        }
+
+        function extractAndAddURLs() {
+            const text = document.getElementById('ocr-text')?.value || '';
+            const urls = [...new Set((text.match(/https?:\/\/[^\s"'<>]+/g) || []))];
+            if (!urls.length) {
+                alert('No URLs found.');
+                return;
+            }
+            const input = document.getElementById('url-input');
+            const existing = input.value.trim();
+            const toAdd = urls.filter(u => !existing.includes(u)).join('\n');
+            input.value = existing ? existing + '\n' + toAdd : toAdd;
+            document.getElementById('ocr-panel')?.classList.add('hidden');
+        }
+
         function generateCrateCommand() {
             let raw = document.getElementById('url-input').value.trim();
             if (!raw) return alert('Please paste at least one URL');
@@ -327,25 +384,11 @@
             if (isPlaylist) cmd += '--yes-playlist ';
             cmd += `-o "%(title)s.%(ext)s" ${urls.map(u => `"${u}"`).join(' ')}`;
 
-            // Build enhanced wrapper with pipeline options
-            let extraSteps = '';
-            if (document.getElementById('open-logic')?.checked) {
-                extraSteps += `\necho "Opening in Logic Pro..."\nopen -a "Logic Pro" ~/Downloads/*.${fmt === 'mp3' ? 'mp3' : 'wav'}`;
-            }
-            if (document.getElementById('open-djay')?.checked) {
-                extraSteps += `\necho "Opening in djay Pro..."\nopen -a "djay Pro" ~/Downloads/*.${fmt === 'mp3' ? 'mp3' : 'wav'}`;
-            }
-            if (document.getElementById('stem-separation')?.checked) {
-                extraSteps += `\n\necho "For high-quality stem separation on Mac:"\necho "1. Install UVR5 (Ultimate Vocal Remover)"\necho "2. Use BS-RoFormer or HTDemucs + MDX ensemble for best results"\necho "3. Recommended: BS-RoFormer for vocals + HTDemucs for drums/bass"`;
-            }
-
             const wrapper = `cat > ~/Downloads/crate.sh << 'EOF'
 ${cmd}
-${extraSteps}
 echo "✅ Crate ready in ~/Downloads"
 EOF
 chmod +x ~/Downloads/crate.sh
-echo "✅ Script created at ~/Downloads/crate.sh"
 bash ~/Downloads/crate.sh`;
 
             document.getElementById('command-output').textContent = cmd;
@@ -361,7 +404,7 @@ bash ~/Downloads/crate.sh`;
             createSliderControls();
             const first = document.querySelector('[data-format="mp3"]');
             if (first) first.classList.add('active', 'border-orange-400/70');
-            console.log('%c[CRATE GRABBER v4.4] Full pipeline + BS-RoFormer aware version loaded', 'color:#854d0e');
+            console.log('%c[CRATE GRABBER v4.5] Liquid Glass + Max Prompt + iPad workflow loaded', 'color:#854d0e');
         }
 
         window.onload = init;
